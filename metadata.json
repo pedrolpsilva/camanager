@@ -1,0 +1,6 @@
+{
+  "name": "Gemini Vision Tracker",
+  "description": "Real-time webcam analysis using Gemini 1.5 Flash to track person count, demographics, and dwell time with JSON output.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["vision", "real-time-analysis"]
+}
