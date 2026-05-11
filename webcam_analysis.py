@@ -7,7 +7,6 @@ import time
 import threading
 import json
 from PIL import Image
-import io
 
 # --- CONFIGURATION ---
 API_KEY = ""
