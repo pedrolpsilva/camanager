@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GoogleGenAI, Type } from '@google/genai';
 import { Camera, Users, Clock, Code, Activity, AlertCircle, RefreshCw, Square, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -29,7 +29,42 @@ interface AnalysisResult {
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const modelName = 'gemini-2.0-flash';
 
+function CountdownTimer({ isAnalysisEnabled, isAnalyzingRef }: { isAnalysisEnabled: boolean, isAnalyzingRef: React.MutableRefObject<boolean> }) {
+  const [secondsToNext, setSecondsToNext] = useState(10);
+
+  useEffect(() => {
+    if (!isAnalysisEnabled) {
+      setSecondsToNext(10);
+      return;
+    }
+
+    setSecondsToNext(10);
+    const countdownInterval = setInterval(() => {
+      if (!isAnalyzingRef.current) {
+        setSecondsToNext(prev => (prev > 1 ? prev - 1 : 10));
+      }
+    }, 1000);
+
+    return () => clearInterval(countdownInterval);
+  }, [isAnalysisEnabled, isAnalyzingRef]);
+
+  if (!isAnalysisEnabled) return null;
+
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-lg flex items-center gap-3">
+      <RefreshCw className="w-4 h-4 text-orange-500" />
+      <span className="text-xl font-mono font-bold text-orange-500 w-12 text-center">
+        {secondsToNext}s
+      </span>
+      <span className="text-[10px] font-mono uppercase text-zinc-500 leading-none">
+        Next<br/>Scan
+      </span>
+    </div>
+  );
+}
+
 export default function App() {
+
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -39,7 +74,6 @@ export default function App() {
   const [lastJson, setLastJson] = useState<string>('');
   const [dwellTime, setDwellTime] = useState(0);
   const [emptyChecks, setEmptyChecks] = useState(0);
-  const [secondsToNext, setSecondsToNext] = useState(10);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -121,21 +155,12 @@ export default function App() {
   // --- Analysis Loop ---
   useEffect(() => {
     if (!isAnalysisEnabled) {
-      setSecondsToNext(10);
       return;
     }
-    
-    setSecondsToNext(10);
-    const countdownInterval = setInterval(() => {
-      if (!isAnalyzingRef.current) {
-        setSecondsToNext(prev => (prev > 1 ? prev - 1 : 10));
-      }
-    }, 1000);
 
     const interval = setInterval(captureAndAnalyze, 10000);
     return () => {
       clearInterval(interval);
-      clearInterval(countdownInterval);
     };
   }, [stream, isAnalysisEnabled]);
 
@@ -290,17 +315,7 @@ export default function App() {
                 SENSOR: {stream ? 'ACTIVE' : 'OFFLINE'}
               </span>
             </div>
-            {isAnalysisEnabled && (
-              <div className="bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-lg flex items-center gap-3">
-                <RefreshCw className="w-4 h-4 text-orange-500" />
-                <span className="text-xl font-mono font-bold text-orange-500 w-12 text-center">
-                  {secondsToNext}s
-                </span>
-                <span className="text-[10px] font-mono uppercase text-zinc-500 leading-none">
-                  Next<br/>Scan
-                </span>
-              </div>
-            )}
+            <CountdownTimer isAnalysisEnabled={isAnalysisEnabled} isAnalyzingRef={isAnalyzingRef} />
           </div>
         </header>
 
