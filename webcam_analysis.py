@@ -24,7 +24,6 @@ state = {
     "people_count": 0,
     "people": [],
     "dwell_time_start": None,
-    "accumulated_dwell_time": 0,
     "is_processing": False,
     "empty_count": 0,
     "last_json": {}
@@ -81,7 +80,6 @@ def analyze_frame(frame):
             state["empty_count"] += 1
             if state["empty_count"] >= CONSECUTIVE_EMPTY_LIMIT:
                 state["dwell_time_start"] = None
-                state["accumulated_dwell_time"] = 0
                 
         # Console Output
         print("\n--- GEMINI ANALYSIS ---")
