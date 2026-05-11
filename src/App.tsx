@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GoogleGenAI, Type } from '@google/genai';
-import { Camera, Users, Clock, Code, Activity, AlertCircle, RefreshCw, Square, Play } from 'lucide-react';
+import { Camera, Users, Code, Activity, AlertCircle, RefreshCw, Square, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // --- Types ---
