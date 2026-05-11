@@ -38,7 +38,7 @@ export default function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [lastJson, setLastJson] = useState<string>('');
   const [dwellTime, setDwellTime] = useState(0);
-  const [emptyChecks, setEmptyChecks] = useState(0);
+  const emptyChecksRef = useRef(0);
   const [secondsToNext, setSecondsToNext] = useState(10);
   
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -234,19 +234,16 @@ export default function App() {
 
       // Dwell Time Logic
       if (data.people_count > 0) {
-        setEmptyChecks(0);
+        emptyChecksRef.current = 0;
         if (dwellStartRef.current === null) {
           dwellStartRef.current = Date.now();
         }
       } else {
-        setEmptyChecks(prev => {
-          const next = prev + 1;
-          if (next >= 2) { // 2 consecutive empty checks (8 seconds)
-            dwellStartRef.current = null;
-            return 0;
-          }
-          return next;
-        });
+        emptyChecksRef.current += 1;
+        if (emptyChecksRef.current >= 2) { // 2 consecutive empty checks (8 seconds)
+          dwellStartRef.current = null;
+          emptyChecksRef.current = 0;
+        }
       }
 
     } catch (err) {
