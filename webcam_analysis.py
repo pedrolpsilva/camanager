@@ -6,11 +6,12 @@ import google.generativeai as genai
 import time
 import threading
 import json
+import os
 from PIL import Image
 import io
 
 # --- CONFIGURATION ---
-API_KEY = ""
+API_KEY = os.environ.get('API_KEY')
 MODEL_NAME = "gemini-1.5-flash"
 CHECK_INTERVAL = 4 # Seconds between API analysis
 CONSECUTIVE_EMPTY_LIMIT = 2 # How many empty checks before resetting dwell time
