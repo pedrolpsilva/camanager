@@ -7,4 +7,4 @@ coverage/
 .env*
 !.env.example
 *.lock
-*-lock.json
+*-lock.json__pycache__/
